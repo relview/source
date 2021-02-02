@@ -1,0 +1,18 @@
+{********************************************************
+  Computation of the transitive closure of a directed
+  graph as the least fixed point of the mapping
+  tau(X) = R | R * X
+********************************************************}
+ 
+TransClosure(R)
+  DECL Q, S
+  BEG  Q = O(R);
+       S = R;
+       WHILE -eq(S,Q) DO
+         Q = S;
+         S = R | R * Q
+         OD
+       RETURN S
+ 
+  END.
+ 

@@ -1,0 +1,91 @@
+{************************************************************
+ Computation of the Dedekind cut completion of a partial or-
+ der: The vector describing the cuts, their columnwise rep-
+ resentation, the order of the complete lattice of the cuts, 
+ the injective embedding of the order into the cut lattice, 
+ and their visualization as subrelation (see Report 9205, 
+ UniBw Muenchen). The vector argument cv in CutList until 
+ CutVisualize stands for the result of CutVect and serves 
+ for efficient computations
+8**********************************************************}
+
+CutVect(R)
+  DECL Id, c, eps
+  BEG  eps = epsi(dom(R));
+       Id  = I(eps^ * eps);  
+       c   = dom(syq(eps,mi(R,ma(R,eps))) & Id)
+       RETURN c
+  END.
+
+CutList(R,cv) = epsi(dom(R)) * inj(cv)^.
+
+CutLattice(R,cv)
+  DECL emb, eps, incl
+  BEG  eps = epsi(dom(R));
+       incl = eps \ eps;
+       emb = inj(cv)
+       RETURN emb * incl * emb^
+  END.
+
+FastCutLattice(R,cv)
+  DECL CL
+  BEG  CL = CutList(R,cv);
+       RETURN CL \ CL
+  END.
+
+CutEmb(R,cv) = syq(R,epsi(dom(R)) * inj(cv)^).
+
+CutVisualize(R,cv)
+  DECL Emb
+  BEG  Emb = CutEmb(R,cv)  
+       RETURN Emb^ * R * Emb
+  END.
+
+{************************************************************
+ Computation of the ideal completion of a lattice. The vec-
+ tor describing the ideals, their column-wise representati-
+ on, the order of the complete lattice of the ideals the in-
+ jective embedding of the given lattice into the ideal lat-
+ tice, and their visualization as subrelation
+************************************************************}
+
+ConeVect(E) 
+  DECL Epsi
+  BEG  Epsi = epsi(dom(E))
+       RETURN -dom(Epsi^ & -Epsi^*E)
+  END.
+
+DirectVect(E)
+  DECL Epsi, Empty
+  BEG  Epsi  = epsi(dom(E));
+       Empty = Epsi \ On1(E)
+       RETURN -Empty & ((-Epsi^ | (Epsi \ E*E^)) / L1n(E))
+  END.
+
+IdealVect(E)
+  DECL Epsi
+  BEG  Epsi  = epsi(dom(E))
+       RETURN ConeVect(E) & DirectVect(E)
+  END.
+
+ConeList(E) = epsi(dom(E)) * inj(ConeVect(E))^.
+
+DirectList(E) = epsi(dom(E)) * inj(DirectVect(E))^.
+
+IdealList(E) = epsi(dom(E)) * inj(IdealVect(E))^.
+
+IdealLattice(E)
+  DECL Emb, Epsi, Incl
+  BEG  Epsi = epsi(dom(E));
+       Incl = Epsi \ Epsi;
+       Emb = inj(IdealVect(E))
+       RETURN Emb * Incl * Emb^
+  END.
+
+IdealEmb(E) = syq(E,epsi(dom(E)) * inj(IdealVect(E))^).
+
+IdealVisualize(E)
+  DECL Emb
+  BEG  Emb = IdealEmb(E)  
+       RETURN Emb^ * E * Emb
+  END.

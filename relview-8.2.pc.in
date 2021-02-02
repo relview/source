@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/relview-8.2
+
+Name: relview
+Description: Kiel University Relation Algebra Manipulation System
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} @KURE_LIBS@ @GLIB_LIBS@ @GTK_LIBS@
+Cflags: -I${includedir} @KURE_CFLAGS@ @GLIB_CFLAGS@ @GTK_CFLAGS@

@@ -1,0 +1,156 @@
+{************************************************************
+ Recursive computation of the DFS-forest of a directed graph 
+ following the standard approach
+************************************************************}
+
+DfsVisit(R,p,v)
+  DECL q, u, w, T
+  BEG  T = O(R);
+       u = v | p;
+       w = R^ * p & -u;
+       WHILE -empty(w) DO
+         q = point(w);
+         T = T | p * q^ | DfsVisit(R,q,u); 
+         u = u | T^ * Ln1(R);
+         w = R^ * p & -u 
+         OD
+       RETURN T
+  END.
+
+Dfs(R)
+  DECL p, v, F
+  BEG  F = O(R);
+       v = On1(R);
+       WHILE -empty(-v) DO
+         p = point(-v);
+         F = F | DfsVisit(R,p,v);
+         v = v | p | F^ * Ln1(R) 
+         OD
+       RETURN F
+  END.
+
+{************************************************************
+ Recursive computation of a kernel of a graph without odd 
+ cycles following the constructive proof of Richardson's 
+ theorem given in Schmidt/Stroehlein 93, Proposition 8.2.13
+************************************************************}
+
+TermScc(R)
+  DECL B, c, p, x
+  BEG  B = rtc(R) & rtc(R)^;
+       c = B * point(Ln1(R));        
+       x = -c;                      
+       WHILE -empty(R^ * c & -c) DO
+         c = B * point(x);         
+         x = x & -c
+         OD
+       RETURN c
+  END.
+
+Kernel(R)
+  DECL KernelSc(R) = rtc(R * R) * point(Ln1(R));
+       c, d, kc, kd, res
+  BEG  c = TermScc(R);
+       kc = inj(c)^ * KernelSc(inj(c) * R * inj(c)^);
+       d = -(kc | R * kc);
+       IF empty(d) 
+         THEN res = kc
+         ELSE kd = inj(d)^ * Kernel(inj(d) * R * inj(d)^);
+              res = kc | kd FI
+       RETURN res
+  END.
+   
+{************************************************************
+ Recursive computation of the chromatic number of an undir-
+ ected and loop-free graph using the algorithm of Zykov. For 
+ details, see Emden-Weinert et al., p. 146. The chromatic 
+ number is represented by the number of rows of the result-
+ ing universal vector
+************************************************************}
+
+ContractEdge(E,e)
+  DECL M, v
+  BEG  v = dom(e);
+       M = conc(inj(-v)^,v)
+       RETURN ipa(M^ * E * M)
+  END.
+
+ChromNumbZ(E)
+  DECL a, e, c, c1, c2
+  BEG  IF eq(E,-I(E))
+         THEN c = Ln1(E)
+         ELSE a = atom(-E & -I(E));
+              e = a | a^;
+              c1 = ChromNumbZ(E | e);
+              c2 = ChromNumbZ(ContractEdge(E,e));
+              IF cardlt(c1,c2) 
+                THEN c = Ln1(c1)
+                ELSE c = Ln1(c2) FI FI
+       RETURN c
+  END.
+
+{************************************************************
+ Recursive computation of the chromatic number of an undir-
+ ected and loop-free graph using the algorithm of Christofi-
+ des. For details, see again Emden-Weinert et al., p. 147. 
+ The result is again represented by the number of rows of an
+ universal vector
+************************************************************}
+
+KernelList(R)
+  DECL Epsi, REpsi, H1, H2, k
+  BEG  Epsi = epsi(On1(R));
+       REpsi = R * Epsi;
+       H1 = Epsi | REpsi;
+       H2 = Epsi & REpsi;
+       k = -(L1n(R) * (-H1 | H2))^
+       RETURN Epsi * inj(k)^
+  END.
+
+ChromNumbC(E)
+  DECL delete(R,v) = inj(-v) * R * inj(-v)^;
+       K, p, c, d
+  BEG  IF empty(E) 
+         THEN c = true
+         ELSE IF eq(E,-I(E)) 
+                THEN c = Ln1(E)
+                ELSE K = KernelList(E);
+                     p = init(L1n(K)^);
+                     c = ChromNumbC(delete(E,K*p));
+                     WHILE -empty(next(p)) DO
+                       p = next(p);
+                       d = ChromNumbC(delete(E,K*p));
+                       IF cardlt(d,c) THEN c = d FI
+                       OD;
+                    c = true + c FI FI
+       RETURN c
+  END.
+
+{************************************************************
+ Recursive computation of the reflexive-transitive closure 
+ by deleting a single arc
+************************************************************}
+
+ReflTransCl1(R)
+  DECL C, A
+  BEG  IF empty(R) THEN C = I(R)
+                   ELSE A = atom(R);
+                        C = ReflTransCl1(R & -A);
+                        C = C | C * A * C FI
+       RETURN C
+  END.
+
+{************************************************************
+ Recursive computation of the reflexive-transitive closure 
+ by deleting the outgoing arcs of a single vertex
+************************************************************}
+
+ReflTransCl2(R)
+  DECL C, A, p 
+  BEG  IF empty(R) THEN C = I(R)
+                   ELSE p = point(dom(R));
+                        A = p * (p^ * R);
+                        C = ReflTransCl2(R & -A);
+                        C = C | C * A * C FI
+       RETURN C
+  END.

@@ -1,0 +1,37 @@
+README			Read this file.
+COMPILE			Instructions to compile the RelView system.
+FILES			This file.
+CHANGES			Describes changes to the source. Early parts are written
+			in german.
+LICENSE			The software's license.
+Makefile.am		Input file for automake in the top-level directory.
+configure.ac		Input file for autoconf.
+start_up.*              Examples for files RelView can load at startup.
+compile-uni.sh		Use this shell script to compile RelView on the SunOS
+                        system at sauron (university).
+configure		Configure script. See COMPILE file for details on how
+			to compile the system. Only available in distributions.
+
+data/			Data files for the system. Installed in 
+			$(datadir)/relview-8.0.
+data/labels/		Some example labels.
+data/programs/		Some example programs, e.g. approximation algorithms for
+			coloring problems. See also the examples shipped along
+			with the Kure library.
+data/base_functions.pdf	Overview of the relational functions available in the
+			Relview system.
+data/relview.glade	The Relview system's UI specification. Can be edited
+			with Glade.
+data/xdd.dtd		Data type description for XDD files.
+doc/			Developer and end-user Documentation.
+include/                Overall include directory.
+m4/			Directory to store m4 script for autoconf.
+plugins/		Default plugins which are shipped with the distribution.
+			Can also be considered as examples for your own plugins.
+plugins/ascii/		Adds support to read/write single relations and graphs,
+			respectively  from/to so called ASCII files
+plugins/graph-drawing/	Graph-drawing algorithms. These were part of the RelView
+			system itself in previous versions.
+plugins/luaconsole/	A console to evaluate Lua code. This is mainly for
+			testing purposes.
+src/			The source code.

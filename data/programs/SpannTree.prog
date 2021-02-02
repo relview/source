@@ -1,0 +1,19 @@
+{*********************************************************
+  Fast cmputation of a (directed) spanning tree of a con-
+  nected and undirected graph following Prim's method
+*********************************************************}
+ 
+SpanntreeFast(E)
+  DECL T, s, v, w
+  BEG  IF -isempty(E) THEN T = atom(E);
+                           s = dom(T);
+                           v = s | ran(T);
+                           WHILE -empty(-v) DO
+                             T = T | atom(v * -v^ & E);
+                             v = s | ran(T)
+                             OD
+                      ELSE T = O(E) FI
+       RETURN T
+  END.
+ 
+

@@ -1,0 +1,49 @@
+#!/bin/sh
+
+#uncomment for debugging
+#set -x
+
+found=0
+progname="$0"
+curdir=`dirname "$progname"`
+progbase=`basename "$progname"`
+rv_bin=@relview_binary@
+run_rv="$curdir/$rv_bin"
+if test -x "$run_rv"; then
+  dist_bin="$curdir"
+  found=1
+else
+  here=`/bin/pwd`
+  # resolve symbolic links
+  while [ -h "$progname" ]; do
+    bn=`basename "$progname"`
+    cd `dirname "$progname"`
+    progname=`/bin/ls -l "$bn" | sed -e 's/^.* -> //' `
+    progbase=`basename "$progname"`
+    if [ ! -x "$progname" ]; then
+      break
+    fi
+    curdir=`dirname "$progname"`
+    run_rv="$curdir/$rv_bin"
+    if [ -x "$run_rv" ]; then
+      cd "$curdir"
+      dist_bin=`pwd`
+      run_rv="$dist_bin/$rv_bin"
+      found=1
+      break
+    fi
+  done
+  cd "$here"
+fi
+if [ $found = 0 ]; then
+    echo "Cannot find RelView runtime directory. Exiting."
+    exit 1
+fi
+
+# Run program and filter warning messages.
+LD_LIBRARY_PATH=:$LD_LIBRARY_PATH "$dist_bin/$rv_bin" "$@" \
+    | awk '!(/DDM/ || /dd manager/ || /^$/)'
+exitcode=$?
+
+exit $exitcode
+# EOF.

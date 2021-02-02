@@ -1,0 +1,85 @@
+//  This is used by Doxygen to generate the index page.
+/**
+
+@mainpage Kure2 Documentation
+
+Welcome to the Kure2 library!
+
+\page ConfBuild Configuration and Building
+
+In order to build the library, you have to meet some prerequistes:
+- The <a href="http://gcc.gnu.org/">GNU C compiler</a>
+- The <a href="http://www.lua.org/">Lua</a> static library version 5.1
+- A recent version of GLib 2.0 (see <a
+href="http://www.gtk.org">www.gtk.org</a>)
+- A recent version of the <a href="http://www.gmplib.org">GNU Multiprecision Library</a>
+(libgmp)
+- The <a href="http://vlsi.colorado.edu/~fabio/">Cudd BDD Package</a> version 2.3.1 or newer
+
+Most of these libraries can be installed using your package management
+system, if you have one (e.g. apt for Debian and Ubuntu). However, the
+Cudd package has to be compiled from source in most cases. There is a
+short section in the <a
+href="http://vlsi.colorado.edu/~fabio/CUDD/">Cudd User's Manual</a> on
+how to do this.
+
+If you are unsure or if you encounter problems with one of these
+libraries, evaluate the following in you shell:
+\code
+pkg-config lua glib-2.0 --modversion
+\endcode
+
+On success, there are two version numbers on your screen
+now. Otherwise, there is an error message which indicates which of the
+libraries couldn't be found. If glib-2.0 is missing, you should
+install it. If Lua is missing, check if your distribution has renames
+the original package. E.g. Ubuntu's Lua 5.1 library is suffixed by
+5.1, that it, try to evaluate the following.
+
+
+\code
+pkg-config lua5.1 --modversion
+\endcode
+
+If this does work, remember it. We need it in a second.
+
+If you have some libraries in a non-standard directory, check if you
+have set the environment variable PKG_CONFIG_PATH correctly.
+
+Kure2 has autoconf support. So, in order to configure the package, you
+have to call the configure script in the top-level directory of
+Kure2. Let's say kure2-&lt;version>.
+
+The configure script expects at least the directory of your Cudd
+package. I.e. if you Lua package has the name lua and not lua5.1 the
+following should work:
+\code
+./configure --with-cudd-dir=&lt;cudd-dir> --disable-shared
+\endcode
+The --disable-shared option is mandatory, because there ir currently is
+no support for shared libraries.
+
+If your Lua package has another name, use --with-lua-pc to pass that
+name, e.g.
+\code
+./configure --with-cudd-dir=&lt;cudd-dir> --disable-shared --with-lua-pc
+\endcode
+
+If something went wrong, the output of the configure script should
+give you a hint. A more detailed description can be found in the
+config.log file. If you see no escape, then write an email!
+
+You can use
+\code
+make -j&lt;N&gt;
+\endcode
+to compile the package where &lt;N&gt; is, for instance, the number of CPU cores.
+
+After compilation use
+\code
+make install
+\endcode
+to install you package in the default path. You can change the
+install path using the --prefix option in your configure
+script. E.g. --prefix=/home/&lt;USER&gt;
+

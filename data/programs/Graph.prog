@@ -1,0 +1,510 @@
+{************************************************************
+Computation of the vector of cutpoints (articulation points)
+of an undirected and loop-free graph using DFS and a charac-
+terization of cutpoints given in Lemma 5.5 of the textbook
+"The design and analysis of computer algorithms" from Aho,
+Hopcroft, and Ullman. Confer p. 182
+************************************************************}
+
+CutPoints(E)
+  DECL F, B, C, c
+  BEG  F = Dfs(E);
+       C = rtc(F);
+       B = C^ & E;
+       c = (-dom(F^) & dom(F*-I(F)*F^ & I(F))) |
+           (dom(F^)  & dom(F & ((ipa(C) \ -B^) / C)))
+       RETURN c
+  END.
+
+{************************************************************
+Computation of the dominator tree of a rooted directed and
+acyclic graph g = (V,R) with root init(L) following a idea
+of the Aho-Ullman book
+************************************************************}
+
+DominatorTree(R)
+  DECL del(R,x) = R & -(x*L1n(R)) & -(Ln1(R)*x^);
+       reach(R,x) = (x^ * rtc(R))^;
+       T, v, i, p, q
+  BEG  i = init(Ln1(R));
+       T = ipa(i * L1n(R));
+       p = next(i);
+       WHILE -empty(next(p)) DO
+         v = -(reach(del(R,p),i) | p);
+         WHILE -empty(v) DO
+           q = point(v);
+           IF eq(T*p,T*q)
+             THEN T = (T & -(Ln1(R)*q^)) | p*q^ FI;
+           v = v & -q
+           OD;
+         p = next(p)
+         OD
+       RETURN T
+  END.
+
+{************************************************************
+Computation of a closed Eulerian path in an undirected, Eu-
+lerian graph using the algorithm of Fleury. The result is a
+relation which - from left to righy - column-wise describes
+the list of points
+************************************************************}
+
+EulerPath(E)
+  DECL edge(E) = atom(E) | atom(E)^;
+       isbridge(E,e) = -incl(e,trans(E & -e));
+       v, S, e, C, Res
+  BEG  v = point(Ln1(E));
+       S = E;
+       Res = v;
+       WHILE -empty(S) DO
+         C = S & ((v*L1n(S)) | (v*L1n(S))^);
+         IF empty(C & -edge(C)) THEN e = C
+                                ELSE e = edge(C);
+                                     C = C & -e;
+                                     WHILE isbridge(S,e) DO
+                                       e = edge(C);
+                                       C = C & -e
+                                       OD FI;
+         v   = e * v;
+         S   = S & -e;
+         Res = conc(Res,v)
+         OD
+       RETURN Res
+  END.
+
+{************************************************************
+Computation of a directed spanning tree of a connected and
+undirected graph following Prim's method
+************************************************************}
+
+Prim(E)
+  DECL T, v
+  BEG  T = O(E);
+       v = point(dom(E));
+       WHILE -empty(-v) DO
+         T = T | atom(v * -v^ & E);
+         v = v | ran(T)
+         OD
+       RETURN T
+  END.
+
+{***********************************************************
+Computation of a spanning forest of an undirected graph
+with Kruskal's method using a relational implementation
+of the union-find structure (initial, find, union)
+***********************************************************}
+
+Kruskal(E)
+  DECL initial(E) = O(E);
+       find(C,x) = rtc(C)^ * x & -dom(C);
+       union(C,x,y) = C | y * x^;
+       K, F, C, e, x, y
+  BEG  K = E;
+       F = O(E);
+       C = initial(E);
+       WHILE -empty(K) DO
+         e = atom(K);
+         x = find(C,dom(e));
+         y = find(C,ran(e));
+         IF eq(x,y) THEN K = K & -(e | e^)
+                    ELSE K = K & -(e | e^);
+                         F = F | e | e^;
+                         C = union(C,x,y) FI
+         OD
+       RETURN F
+  END.
+
+{***********************************************************
+Computation of an inclusion maximal forest of a undirected
+graph using J. Ravelo's development (see RelMiCS 3 procee-
+dings pages 291-300)
+***********************************************************}
+
+MaximalForest(E)
+  DECL F, K, C, e
+  BEG  F = O(E);
+       K = E;
+       C = I(E);
+       WHILE -empty(K) DO
+         e = atom(K);
+         IF -incl(e,C) THEN F = F | e | e^;
+                            C = C * (I(E) | e | e^) * C ;
+                            K = K & -(e | e^)
+                       ELSE K = K & -(e | e^) FI
+         OD
+       RETURN F
+  END.
+
+{************************************************************
+Computation of a hamiltonian circuit of a directed graph if
+it exists. Otherwise the result is empty. The program uses
+the backtracking approach as presented by A. Srivastav in
+the Fortgeschrittenenpraktikum at Kiel University, SS 1999
+************************************************************}
+
+Ham(R,v,m,s)
+  DECL n, w, p, res
+  BEG  res = O(R);
+       n = m | v;
+       IF empty(-n)
+         THEN IF incl(s,R^*v) THEN res = v * s^ FI
+         ELSE w = R^ * v & -n;
+              WHILE -empty(w) & empty(res) DO
+                p = point(w);
+                w = w & -p;
+                res = Ham(R,p,n,s)
+                OD;
+                IF -empty(res) THEN res = v * p^ | res FI FI
+       RETURN res
+  END.
+
+Hamilton(R)
+  DECL p
+  BEG  p = point(Ln1(R))
+       RETURN Ham(R,p,O(p),p)
+  END.
+
+{************************************************************
+Computation of the reflexive transitive closure of a direc-
+ted graph using Warshall's approach (see RelMiCS 1 volume)
+************************************************************}
+
+Warshall(R)
+  DECL Q, p, x
+  BEG  Q = R;
+       x = Ln1(R);
+       WHILE -empty(x) DO
+         p = point(x);
+         Q = Q | (Q * p) * (p^ * Q);
+         x = x & -p
+         OD
+       RETURN I(R) | Q
+  END.
+
+{************************************************************
+Enumeration of the kernels of an arbitrary directed graph
+following the HOA 93 paper of Berghammer et al.
+************************************************************}
+
+KernelVector(R)
+  DECL absorb(R,e,O) = -(e | R * e) \ O;
+       stable(R,e,O) =  (e & R * e) \ O;
+       Epsi
+  BEG  Epsi = epsi(dom(R))
+       RETURN absorb(R,Epsi,On1(R)) & stable(R,Epsi,On1(R))
+  END.
+
+KernelList(R)
+  DECL Res
+  BEG  Res = epsi(dom(R)) * inj(KernelVector(R))^
+       RETURN Res
+  END.
+
+{************************************************************
+Computation of a kernel of a bichromatic directed graph fol-
+lowing von Karger and Berghammer (see IPL 1997). Input is a
+pair (R,B) of relations which constitutes a 2-colouring of
+the arcs
+************************************************************}
+
+KernelBichrom(R,B)
+  DECL m, n, r, x
+  BEG  m = On1(R);
+       x = -dom(R);
+       WHILE -eq(m,x) DO
+         m = x;
+         x = -(R * -(R * m))
+         OD;
+       n = Ln1(R);
+       x = -(R * -dom(R));
+       WHILE -eq(n,x) DO
+         n = x;
+         x = -(R * -(R * n))
+         OD;
+       r = n & -m
+       RETURN m | (r & -(B * r))
+  END.
+
+{************************************************************
+Computation of a kernel of a bipartite directed graph follo-
+wing the book of Schmidt and Stroehlein. Input is the assoc-
+iated relation B. The program first computes a vector which
+defines a bipartition
+************************************************************}
+
+Bipart(B)
+  DECL Q, Res, v, w
+  BEG  Q = B | B^;
+       IF incl(rtc(Q*Q)*Q,-I(B))
+         THEN v = rtc(Q*Q) * point(Ln1(B));
+              w = v | Q * v;
+              WHILE -eq(w,Ln1(w)) DO
+                v = v | rtc(Q*Q) * point(-w);
+                w = v | Q * v
+                OD;
+              Res = v
+         ELSE Res = error FI
+       RETURN Res
+  END.
+
+KernelB(B)
+  DECL tau(B,x) = -(B * -(B * x));
+       b, k1, k2, v
+  BEG  b = Bipart(B);
+       k1 = O(b);
+       v  = tau(B,k1);
+       WHILE -eq(k1,v) DO
+         k1 = v;
+         v  = tau(B,k1)
+         OD;
+       k2 = L(b);
+       v  = tau(B,k2);
+       WHILE -eq(k2,v) DO
+         k2 = v;
+         v  = tau(B,k2)
+         OD
+       RETURN (b & k2) | (-b & k1)
+  END.
+
+{************************************************************
+Computation of a kernel of a bipartite directed graph follo-
+wing the the HOA 93 paper of Berghammer et al. Input are two
+relations R : X <-> Y and S : Y <-> X which constitute a bi
+partition of B : X+Y <-> X+Y
+************************************************************}
+
+KernelRS(R,S)
+  DECL alpha(R,x) = -(R * x);
+       beta(S,y)  = -(S * y);
+       k, v, w
+  BEG  k = Ln1(R);
+       v = alpha(R,beta(S,k));
+       WHILE -eq(k,v) DO
+         k = v;
+         v = alpha(R,beta(S,k))
+         OD;
+       k = On1(S);
+       w = beta(S,alpha(R,k));
+       WHILE -eq(k,w) DO
+         k = w;
+         w = beta(S,alpha(R,k))
+         OD
+       RETURN v + w
+  END.
+
+{************************************************************
+Computation of the only kernel of a Noetherian (cycle-free)
+directed graph as least fixed point of the monotone mapping
+tau(x) = -(R * -(R * x)); see Schmidt and Stroehlein book
+************************************************************}
+
+KernelCf(R)
+  DECL k, v
+  BEG  k = On1(R);
+       v = -(R * -(R * k));
+       WHILE -eq(k,v) DO
+         k = v;
+         v = -(R * -(R * k))
+         OD
+       RETURN k
+  END.
+
+{************************************************************
+Computation of the column-wise representation of the strong-
+ly connected components of a directed graph
+************************************************************}
+
+Scc(R)
+  DECL B, S, p, x
+  BEG  B = rtc(R) & rtc(R)^;
+       S = B * point(Ln1(R));
+       x = -S;
+       WHILE -empty(x) DO
+         p = point(x);
+         S = conc(S, B * p);
+         x = x & -(B * p)
+         OD
+       RETURN S
+  END.
+
+{************************************************************
+Computation of a vertex base of a directed graph by taking
+exactly one vertex from each initial strongly connected com-
+ponent
+************************************************************}
+
+VertexBase(R)
+  DECL S, v, c, b
+  BEG  S = rtc(R) & rtc(R^);
+       c = S * point(Ln1(S));
+       IF incl(R*c,c) THEN b = point(c)
+                      ELSE b = O(c) FI;
+       v = -c;
+       WHILE -empty(v) DO
+         c = S * point(v);
+         IF incl(R*c,c) THEN b = b | point(c) FI;
+         v = v & -c
+         OD
+       RETURN b
+  END.
+
+{************************************************************
+Computation of an inclusion maximum matching of an arbitrary
+undirected and loop-free graph (see scriptum of Emden-Weinert
+et al.)
+************************************************************}
+
+MaximalMatch(R)
+  DECL M, H, e, v
+  BEG  M = O(R);
+       H = R;
+       WHILE -empty(H) DO
+         e = atom(H);
+         v = dom(e) | ran(e);
+         M = M | e | e^;
+         H = del(H,v)
+         OD
+       RETURN M
+  END.
+
+{************************************************************
+ Computation of a maximum matching of bipartite graph using
+ the program of Thomas Bache, Alexandra Bunge, and Christian
+ Kasper from the Fortgeschrittenenpraktikum "Effiziente Al-
+ gorithmen" WS 99/00  Uni Kiel
+************************************************************}
+
+AltPath(R,M,MT,RohneM,RohneMT,v,b)
+  DECL erg, vR, vRR, x, y, z
+  BEG  vR = (RohneM * v);
+       IF incl(b,vR)
+         THEN erg = atom((v * b^) & RohneM)
+         ELSE vRR = MT * vR;
+              erg = AltPath(R,M,MT,RohneM,RohneMT,vRR,b);
+              z = dom(erg) & -dom(erg^);
+              y = point((M * z) & vR);
+              x = point((RohneM * y) & v);
+              erg = erg | x * y^ | y * z^ FI
+       RETURN erg
+  END.
+
+AugPath(R,M,RmM) = rtc(RmM * M) * RmM & -(L(M) * M) & -(M * L(M)).
+
+MaximumMatch(R)
+  DECL symDiff(A,B) = (A & -B) | (B & -A);
+       M, RohneM, AltP, a, b, H, ab
+  BEG  M = MaximalMatch(R); {* instead of O(R) *}
+       RohneM = R & -M;
+       H = AugPath(R,M,RohneM);
+       WHILE -empty(H) DO
+         ab = atom(H);
+         a = dom(ab);
+         b = ran(ab);
+         AltP = sc(AltPath(R,M,M^,RohneM,RohneM^,a,b));
+         M = symDiff(M,AltP);
+         RohneM = R & -M;
+         H = AugPath(R,M,RohneM)
+         OD
+       RETURN M
+  END.
+
+{************************************************************
+Computation of the transitive reduction of a cyclefree di-
+rected graph by inverting Warshall's algorithm
+************************************************************}
+
+TransRedCf(R)
+  DECL Q, p, x
+  BEG  Q = trans(R);
+       x = Ln1(R);
+       WHILE -empty(x) DO
+         p = point(x);
+         Q = Q & -((Q * p) * (p^ * Q));
+         x = x & -p
+         OD
+       RETURN Q
+  END.
+
+{************************************************************
+Computation of a topological sorting of a cyclefree directed
+graph by removing sources again and again. Result is a line-
+ar strict-order in which the graph's relation can be embed-
+ded
+************************************************************}
+
+TopSortOrd(R)
+  DECL Res, v, p
+  BEG  Res = O(R);
+       v = point(sources(R));
+       WHILE -universal(v) DO
+         p = point(-v & -(R^ * -v));
+         Res = Res | (v & -p) * p^;
+         v = v | p
+         OD
+       RETURN Res
+  END.
+
+{************************************************************
+ Fast version of a BFS program which is due to Thorsten
+ Hoffmann (Ph.D thesis, Kiel University, 2002)
+************************************************************}
+
+Bfs(R,s)
+  DECL T, a, p, u, v, w, x, y
+  BEG  v = s;
+       x = s;
+       y = R^ * x & -v;
+       T = v * y^;
+       WHILE -empty(y) DO
+         v = v | y;
+         x = y;
+         y = R^ * x & -v;
+         u = x;
+         w = y;
+         WHILE -empty(w) DO
+           p = point(u);
+           a = R^ * p & w;
+           T = T | p * a^;
+           u = u & -p;
+           w = w & -a
+           OD
+       OD
+       RETURN T
+  END.
+
+{************************************************************
+ Iterative computation of the directed dfs-forest of a di-
+ rected graph g = (V,R) following Thorsten Hoffmann's ap-
+ proach (Ph.D. thesis, Kiel University, 2002). The argument
+ W of Dfs is an ordering on the vertices which determines
+ how the succes- sors of a vertex are visited
+************************************************************}
+
+DfsTree(R,W,v,r)
+  DECL p, q, w, T
+  BEG  T = O(R);
+       w = v | r;
+       p = r;
+       WHILE -empty(p) DO
+         q = min(W,R^*p & -w);
+         IF empty(q) THEN p = T * p
+                     ELSE w = w | q;
+                          T = T | p * q^;
+                          p = q FI
+         OD
+       RETURN T
+  END.
+
+Dfs(R,W)
+  DECL v, r, F, T
+  BEG  F = O(R);
+       v = On1(R);
+       WHILE -empty(-v) DO
+         r = min(W,-v);
+         T = DfsTree(R,W,v,r);
+         F = F | T;
+         v = v | r | ran(F)
+         OD
+       RETURN F
+  END.
+

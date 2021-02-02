@@ -1,0 +1,17 @@
+{*********************************************************
+  Computation of the only kernel of a Noetherian (cycle-
+  free) directed graph as least fixed point of the mapping
+  tau(x) = -(R * -(R * x))
+*********************************************************}
+ 
+KernelNoetherian(R)
+  DECL k, v
+  BEG  k = On1(R);
+       v = -(R * -(R * k));
+       WHILE -eq(k,v) DO
+         k = v;
+         v = -(R * -(R * k))
+         OD
+       RETURN k
+  END.
+

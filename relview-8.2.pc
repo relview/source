@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/relview-8.2
+
+Name: relview
+Description: Kiel University Relation Algebra Manipulation System
+Version: 8.2
+Libs: -L${libdir} /usr/lib/libkure2.a /usr/share/cudd/cudd/libcudd.a /usr/share/cudd/mtr/libmtr.a /usr/share/cudd/epd/libepd.a /usr/share/cudd/dddmp/libdddmp.a /usr/share/cudd/st/libst.a /usr/share/cudd/util/libutil.a -lm -lgmp -Wl,-l:liblua5.1.a -lm -lglib-2.0 -lgthread-2.0 -pthread -Wl,--export-dynamic -lgmodule-2.0 -pthread -lglib-2.0 -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype
+Cflags: -I${includedir} -I/usr/include/kure2 -I/usr/share/cudd/include -I/usr/include/lua5.1 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -pthread -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -pthread -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/libdrm -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng16 -I/usr/include/pango-1.0 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include

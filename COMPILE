@@ -1,0 +1,52 @@
+Please read these instructions, if you intent to build the RelView system from
+source.
+
+Since version 8.0, Relview uses the Kure library version 2 which implements
+relations and the domain-specific language. Thus, many parts of the old
+Relview system have been removed and/or relocated into the Kure library.
+
+In order to compile Relview, you first have to build and install the Kure
+library version 2 which is available from [1].
+
+The installation of Relview itself is now rather easy due to the use of the
+pkg-config utility. Using pkg-config you can easily check if Kure was installed
+correctly. If the command
+
+	$ pkg-config kure2 --modversion
+	
+returns without an error, kure2 is available and has the given version. 
+Otherwise you should consider setting the PKG_CONFIG_PATH environment variable.
+This can be necessary if you installed Kure into a non-default place. In
+this case, if your installation directory was <prefix>, then you should add 
+<prefix>/lib/pkgconfig to PKG_CONFIG_PATH. Using the bourne-again shell (bash)
+you could write:
+
+	$ PKG_CONFIG_PATH=<prefix>/lib/pkgconfig:$PKG_CONFIG_PATH \
+	     pkg-config kure2 --modversion
+	     
+If you encounter problems at this step, you should check your Kure installation
+and consult pkg-config's manpage.
+
+In order to configure Relview to install it into the default place, just type:
+
+	$ ./configure
+	
+To install it somewhere else together with other versions of Relview, you could 
+use:
+
+	$ ./configure --prefix=<prefix> --program-suffix=<suffix>
+	
+This installs the binary into <prefix>/bin and the binary is called 
+relview<suffix>, for instance, relview-8.1 or relview-svn.
+
+After the configuration was successful, you can use
+
+	$ make
+	$ make install
+	
+to build and install Relview.
+
+If you encounter any problems during configuration or compilation, please don't
+hesitate to report your problems. All comments are very welcome!
+
+[1] http://www.informatik.uni-kiel.de/~progsys/kure2/

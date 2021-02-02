@@ -1,0 +1,20 @@
+{*********************************************************
+  Computation of the (cyclefree) reduced graph of a
+  directed graph using the column-wise representation of
+  the strongly connected components
+*********************************************************}
+ 
+ReducedGraph(R)
+  DECL B, S, T, p, x
+  BEG  B = rtc(R) & rtc(R)^;
+       S = B * point(Ln1(R));
+       x = -S;
+       WHILE -empty(x) DO
+         p = point(x);
+         S = conc(S, B * p);
+         x = x & -(B * p)
+         OD;
+       T = S^ * R * S
+       RETURN T & -I(T)
+  END.
+ 

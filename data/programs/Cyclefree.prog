@@ -1,0 +1,16 @@
+{*********************************************************
+  Testing cyclefreeness of a directed graph by removing
+  sources again and again
+*********************************************************}
+ 
+Cyclefree(R)
+  DECL s, v
+  BEG  v = Ln1(R);
+       s = v & -(R^ * v);
+       WHILE -empty(s) DO
+         v = v & -s;
+         s = v & -(R^ * v)
+         OD
+       RETURN empty(v)
+  END.
+

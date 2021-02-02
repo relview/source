@@ -1,0 +1,9 @@
+
+decut(X) = dom(syq(epsi(X), mi(X,ma(X,epsi(X)))) & I(epsi(X)^ * epsi(X))) .
+
+emb(X) = syq(X, epsi(X) * inj(decut(X))^) .
+
+cutord(X) = inj(decut(X)) * (epsi(X) \ epsi(X)) * inj(decut(X))^ .
+
+markrel(X) = subgraph(cutord(X),ran(emb(X))) .
+

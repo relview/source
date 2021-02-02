@@ -1,0 +1,27 @@
+{*********************************************************
+  Computation of a vertex base of a directed graph
+*********************************************************}
+ 
+Base(R)
+  DECL vector(X) = eq(X,X*L(X^*X));
+       B, C, S, T, b, p, x
+  BEG  B = rtc(R) & rtc(R)^;
+       S = B * point(Ln1(R));
+       x = -S;
+       WHILE -empty(x) DO
+         p = point(x);
+         S = conc(S, B * p);
+         x = x & -(B * p)
+         OD;
+       T = S^ * R * S;
+       T = T & -I(T);
+       C = S * inj(sources(T))^;
+       b = On1(R);
+       WHILE -vector(C) DO
+         b = b | point(first(C));
+         C = rest(C)
+         OD;
+       b = b | point(C)
+       RETURN b
+  END.
+ 

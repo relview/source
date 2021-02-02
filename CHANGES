@@ -1,0 +1,526 @@
+Aug. 2012:
+	- Minor bugs fixes.
+
+Oct. 2011:
+	- Fixed missing paths in Layer graph drawing routine. Added missing call to
+	  reorder_graph.
+
+Sept. 2011:
+	- Removed deprecated gdk_font_load call in GraphWindow.c. This call did not
+	  work on many Fedora distributions.
+	- Added buttons to delete all (visible) programs and functions, resp.
+	- Fixed problem with long display times when epsi(.) is computed for a vector
+	  with just 30 rows. The problem was due to the necessity to figure out the
+	  maximum number of characters of all labels in a given range. This value
+	  can now be computed using a designated function. See LabelFunc in
+	  Label.cpp and LabelMaxLenFunc in label.h.
+	- Fixed wrong node names when loading a XDD file. Added
+	  xgraph_node_set_name. See _xdd_read_graph in XddFile.c for details.
+
+Feb. 2011:
+	- Added some more realistic labels as examples (data/labels/Example.label).
+	- Fixed invalid sizes for top-level windows and bad values in the 
+	  preference file.
+	- Added check for cairo-ps to configure.ac. Postscript capabilities are
+	  needed in Eps.c.
+	- Fixed EPS export for graphs.
+	- Updated files FILES, COMPILE. Added file LICENSE.
+	- Added example how to parse and generate Lua code from a file containing
+	  DSL code.
+	- Added workaround for superfluous BDD reference in compute.c when the
+	  execution is carried out in a separate process.
+	- Added workaround for the missing default probability in dialog to
+	  fill a relation randomly. See rv_user_get_random_fill_percentage.
+	- Fixed moving progress window (evaluation).
+	- Fixed bug involving *_unregister_observer calls during observer
+	  notifications which caused several SIGSEGVs.   
+	- Added tree optimization for multiplication in parser.y.
+	- Fixed a race condition during evaluation with user cancel. The button is
+	  now disabled when the data is transfered to the main process. 
+	- Fixed wrong dimension of relations during export of XDD files.
+	- Rewrote handling of associations between relations and labels. A relation
+	  and a viewable object (e.g. a viewport) can now be associated to a pair
+	  of labels for the rows and columns, respectively.
+	- Added file filter for all known file types in FileWindow.
+	- Fixed many problems with the Debugger. Removed dead code in DebugWindow.c.
+	- Fixed the size of the LabelWindow.
+	- Rewrote handling of Labels. Some parts are in C++ now.
+	- Removed dependency to libglade-2.0.
+	- Fixed bug in "Mark nodes/edges".
+
+17.11.2010:
+	- Replaced README by a link to the project webpage.
+        - Rewrote COMPILE to cover the dependency to the Kure2 library. 
+        - Fixed executable script src/relview.bin which loads the binary.
+        - Include files are now located in $(includedir)/relview-8.0/relview.
+          Changed the plugins accordingly.
+        - Plugin directories are now ~/.relview-8.0/plugins and 
+          $(datadir)/relview-8.0/plugins.
+        - Package data directory is now $(datadir)/relview-8.0. 
+        - Renamed relview.pc to relview-8.0.pc
+	    - Removed unnecessary checks in configure.ac for GMP, CUDD, Lua, Extra, 
+	      Graphviz. GMP, CUDD and Lua are provided by Kure2 the rest is not
+	      needed any longer. Unneeded m4 files were also removed.
+
+09.11.2010:
+		- Large integers are now formated in scientific format. Those integers
+		  appear especially as the dimension of a relation and the number of 
+		  entries.
+		- Fixed a bug regarding very large relations and buffer overflows in
+		  RelationViewport.c.
+
+08.11.2010:
+		- Fixed m4/gmp.m4
+		- The code now compiles on Sun Solaris.
+		- Removed the (F)lex library dependency (-lfl).
+		- Fixed incorrect drawing in RelationViewport. See function draw_matrix 
+		  in src/RelationViewport.c.
+
+01.11.2010:
+		- Removed most debug output or put it into one of the recently added
+		  verbosity classes.
+		- Removed outdates options in the options dialog.
+		- Removed unused libExtra (CUDD extension) from configure.ac
+		- In compute.c the child now reports SIGSEGV events using signal(),
+		  setjmp() and longjmp().
+
+28.10.2010:
+	    - Rewrote some parts of the plugin system.
+	    - Added plugins for graph drawing (old algorithms), ASCII import
+	      export of relations and a LUA console to play around with
+	      KURE's and Relview's LUA binding.
+	    - Some bug fixes.
+	    - Began to remove debug output.
+	    - Added command line option to query Relview's build config (--config).
+	    - Added command line option to control verbosity.
+	    - Some improvements of the build system. Only availablity of KURE is 
+	      checked in preference to checking KURE's dependencies again.
+
+12.10.2010:
+	    - Added the iteration window again. (IterWindow.c/.h)
+	    - We now load the startup file again.
+	    - Replaced rv_gtk.* by RelviewWindow.c/.h and moved the functions
+	      into the new naming scheme (rv_window_*).
+
+11.10.2010:
+		- Added a base class for object Relation, Domain, Program and Function
+		  (RvObject and RvObjectClass) for better incorporate the global
+		  namespace of these objects.
+		- Removed DefFunWindow.c/.h. Use rv_user_edit_function (Relview.c/.h)
+		  instead!
+
+06.10.2010:
+		- Removed graphwindow_intf.c. The graph window is now created by 
+		  GtkBuilder.
+		- Added a global namespace object which provides the possiblity
+		  to have non-ambiguous names for programs, domains, functions and
+		  relations, because they all share the same namespace in Lua. 
+		  Currently, only the RelManager uses it. (Namespace.c/.h)
+
+05.10.2010:
+	    - Nachtrag fuer diverse Veraenderungen am Quellcode, die hier nicht
+	      dokumentiert wurden.
+	    - System fuer die Verwaltung der Fensterpositionen wurde neu
+	      geschrieben (Workspace.c/.h).
+	    - Removed unnecessary or unusable routines in main.c Added GLib
+	      command line option parser. Currently, the only useful option
+	      is --font to select a font from the preferences. 
+
+30.07.2009:
+		- Begonnen das UI auf GtkBuilder umzustellen. Die UI Spezifikations
+		  -datei liegt in data/relview.glade . Ein GtkBuilder Objekt kann
+		  mittel rv_get_gtk_builder aus Relview.c angefragt werden.
+		- Das Relview-Fenster (aka Main-Fenster) wird nun mittels GtkBuilder
+		  erstellt. Die Logik fuer die Beziehung der Toggle-Button und der
+		  Sichtbarkeit der zugehoerigen Fenster wurde vereinfacht.
+		- Das Info-Fenster wird nun mittels Glade erstellt (aboutdialog).
+		- Das SVN-Verzeichnis wurde um nicht notwendige Dateien bereinigt.
+		- Merge des 7.2 branch nach trunk. Der trunk traegt fortan die
+		  Versionsnummer 7.3.
+		- PlugIn-Fenster hinzugefuegt, zusammen mit einer Verwaltung fuer
+		  PlugIns hinzugefuegt.
+
+14.07.2009:
+		- Problem bei der Anzeige langer Relationennamen im Directory-Window
+		  behoben. Die zugehoerige Spalte war zu schmal bemessen. Dieses
+		  Problem kann abhaengig von z.B. der Schriftgroesse auf anderen 
+		  Systemen immernoch auftauchen. (dirwindow_intf.c)
+		- Eingabelaenge des Namen bei Erzeugen neuer Relation begrenzt.
+		  Funktion fuer Eingabe grosser Zahlen von Hand mittels GMP hinzuge-
+		  fuegt. (relation_new_gtk.c, show_relation_new_mp). Werden normale
+		  Zahlen verwendet, d.h. (g)int, so wird nun abgebrochen, versucht der
+		  Benutzer eine zu grosse Zahl einzugeben.
+		- Problem in get_max_label_len2.c (label.c) behoben, wenn zu grosse
+		  Relationen verwendet wurden. Ein Integer-Ueberlauf hat dort zu einer
+		  Endlosschleife gefuehrt.
+		- Info-Fenster angepasst.
+		- Fehler behoben mit 0/1 Labeln. Das Problem lag in der unterschied-
+		  lichen Groesse der 'name' Felder der 'Label' und der 'labelelem' 
+		  (label.h) Strukturen. Das Angleichen beider Werte hat den Fehler
+		  behoben.
+		- Auch bei Xdd Dateien wird nun gefragt, ob eine bereits ex. Datei
+		  ueberschrieben werden soll. (filechooser_gtk.c)
+
+02.07.2009:
+		- Dateien im datadir koennen nun zur Laufzeit gesucht werden und werden
+		  (ggf.) auch dann gefunden, wenn sich die Dateien nicht im install-
+		  datadir befinden. Dies wird notwendig, will man das System verteilen,
+		  ohne es auf jedem System mit 'configure' zu konfigurieren.
+		  (rv_find_data_file in Relview.c). Bisher werden wird nur die DTD der
+		  Xdd Dateien (xdd.dtd) auf diese Art gesucht.
+		- Das 'relview' Shell Skript ermittelt nun automatisch das Verzeichnis,
+		  in dem die binaere ausfuehrbare Datei des Systems liegt. 
+		  (src/relview.in).
+		- Das Modul FileLoader.c/.h kann nun verwendet werden um verschiedene
+		  Dateiformate einzulesen und dabei (noch nicht impl.) Optionen zu
+		  setzen. Etwa ob bei bereits existierenden Relationen der Benutzer
+		  gefragt werden soll, oder eine Regel verwendet werden soll. Das
+		  Module ersetzt die Funktion load_file aus file_ops.c. 
+		- Beim Programmstart wird nun nicht mehr versucht eine .ddd Datei zu
+		  laden. Stattdessen wird eine 'start_up.xdd' in ~/ und dem aktuellen
+		  Verzeichnis gesucht. Das Home-Verzeichnis wird nur dann verwendet,
+		  wenn keine solche Datei im aktuellen Verzeichnis auffindbar ist.
+		  (main.c)
+		- Fehler behoben bei der Anzeige der Eintraege im RelationViewport(.c).
+		  Bei grossen Relationen wurde teilweise garnichts, oder beim Wechseln
+		  von Relationen das Ergebnis der alten Relation angezeigt.
+		- Updated the compile-uni.sh (e.g. Extra-Library, removed distcc).
+
+22.06.2009:
+		- Auch bei Xdd Dateien wird nun automatisch der '.xdd' Suffix ange-
+		  haengt.
+		- Problem mit Zufallszahlen behoben. Zufallszahlen wurden lediglich im
+		  im Arbeiterprozess erhoeht, jedoch nicht im Hauptprozess. Folge:
+		  Jedesmal wenn ein neuer Arbeiterprozess gestartet wurde, lieferte er
+		  die gleichen Zufallszahlen. Es werden nun Zufallszahlen vom Arbeiter-
+		  prozess zurueckuebergeben und damit die Zufallsgen. reinitialisiert.
+		  (compute.c)
+		- Klick man im Relationen-Verzeichnis mit der rechten Maustaste auf eine
+		  Relation, so erscheinen Optionen fuer den zur Relationen gehoerigen 
+		  BDD. Aktuell: Infos (von Cudd), Darstellung als Bild des BDDs und
+		  Export in ein fuer DDcal lesbarer Format.
+		- Operation randomatom(R) hinzugefuegt, welches ein zufaelliges Atom
+		  einer Relation liefert. Die Implementierung nutzt Cudd_bddPick-
+		  OneMinterm der Cudd-Bibliothek. Es handelt sich jedoch noch um eine
+		  undokumentierte Testversion (Misc.c).
+		- Probleme mit dem 'relview' Shell Skript behoben. Allerdings muss der
+		  LIBPATH immernoch von Hand eingetragen werden.
+
+17.06.2009:
+		- Version angehoben auf 7.2.
+		- GTK+ Warnungen der libglade Datei relview.glade.xml behoben.
+		- Xrv-Dateien unabhaengig von den internen C Strukturen 'Graph', 'Node'
+		  'Edge' gemacht. Routinen waren bereits unabhaengig von 'Rel'. (Es
+		  wurde 'Rel_long' verwendet.) Fehler beim Laden von Xrv Dateien werden
+		  z.Zt. so weit wie moeglich ignoriert (fail-safe mode _XRV_FAILSAFE in
+		  src/file.c).
+		- Probleme mit dem Xdd Format Xml Entities behoben.
+
+12.06.2009:
+		- Routinen fuer Optimierung der Ausfuehrungs-Baeume aus 
+		  rv_eval_tree_full (tree.c) ausgekoppelt in TreeOptimizer.c . Zu 
+		  diesem Zwecke wurde die Moeglichkeit geschaffen Programmbaeume als
+		  DOT (GraphViz) Dateien zu exportieren (siehe tree_write_dot_file).
+		- WHILE-Schleifen werden nun nicht mehr rekursiv in rv_eval_tree_full
+		  ausgefuehrt, sondern iterativ mit einem goto-Statement. Dies hebt
+		  die zuvor bestehende Beschraenkung der Anzahl der moeglichen Iter.
+		  durch die Stack-Groesse auf.
+		- Fehle in rv_eval_tree_full behoben bzgl. der Zerstoerung unnoetiger
+		  temp. Relationen. ASSIGN hat unnoetige Relationen nicht freigegeben.
+		- Modul Misc.c aufgenommen. Dieses dient als Ort fuer Routinen, die 
+		  z.B. waehrend der Fehlerbehebung, oder des Testens neuer Funktional-
+		  itaet. Z.B. das Laden von Relationen in bestimmten Formaten, oder
+		  die Ausgabe von ZDDs, oder BDDs im DOT (GraphViz) Format.
+		- Singleton Objekt 'Relview' implementiert, welches Informationen ueber
+		  das laufende System liefern soll. So ersetzt es z.B. die Abfrage, ob
+		  Debugging Informationen ausgegeben werden soll. Dieses Konzept
+		  (ehemals war pref_get_... Aufruf notwendig), wurde nun etwas
+		  verallgemeinert (rv_get/set_verbosity, siehe Relview.h).
+		- Fehler im TreeIterator behoben. Dieser uebersprang beim Durchlaufen
+		  des Ausfuehrungsbaumes einige Nachbarn.
+		- Einige Aufraeumarbeiten in rv_eval_tree_full (tree.c).
+		- Observer fuer prefs.c hinzugefuegt. Dies wurde noetig, da z.B. in 
+		  rv_eval_tree_full nicht mehr direkt auf die "prefs" zugegriffen
+		  wurde sondern stattdessen auf das Relview-Objekt. Damit dieses
+		  immer die aktuellen Einstellungen kennt, muss es vom Prefs-Modul
+		  benachrichtigt werden. Dies geschieht nun. (prefs.c/h, Relview.c)
+
+08.06.2009:
+		- Xdd Datei Unterstuetzung hinzugefuegt. Ddd Datei unterstuetzung 
+		  deaktiviert.
+		- xdd.dtd Datei hinzugefuegt zum Validieren von Xdd Dateien 
+		  (data/xdd.dtd).
+		- Probleme mit zu langsamen Zeichnen von Graphen behoben. Es wird nun
+		  ein Layer verwendet um dynamische (z.B. hervorgehobene) Element (z.B.
+		  Knoten zu zeichnen). 
+
+27.10.2008:
+        - Behoben: Probleme mit den neuen Zugriffsstrukturen auf Kanten und
+          Knoten der Graphen. Grund des Problems war eine sinnfreie Anweisung
+          zum Entfernen der Kanten (graph->edge_root = NULL), anstatt diese
+          tatsaechlich zu entfernen. Neue Operationen _graph_clear und 
+          _graph_clear_edges zu diesem Zweck hinzugefuegt.
+        - Neue Zugriffsstrukturen fuer Graphen (Knoten und Kanten) in die 
+          produktive Version uebernommen. Allerdings kommt es bei mehr als 999
+          Knoten zu Darstellungsfehlern. Dies stellt jedoch zur vorigen 
+          Variante keinen Nachteil dar, da es dort in vertretbarer Zeit nicht
+          moeglich war eine annaehrend Grosse Menge Knoten darzustellen.
+
+26.10.2008:
+        - Behoben: Absturz, wenn Debug-Fenster fruehzeitig geschlossen wird.
+          Dies hat zu Abstuerzen gefuehrt (_debug_window_on_delete).
+        - Behoben: Korrekte Anzeige der Tupling-Operation im Debug-Fenster.
+        - tree_node_to_string spart nun Klammern ein bei der Umwandlung in
+          Zeichenketten.
+
+25.10.2008:
+        - Diverse Fehler bei der Anzeige von Relationen im Zusammenhang mit den
+          Scrollbars beseitigt. Dies betrifft zum einen den am 23.10.2008 teil-
+          weise geloessten Fehler mit zoom-level 10, als auch diverse andere
+          Fehler im Zusammenhang mit labeln.
+        - Das Relationen-Fenster kann aufgrund verzoegerter Aktualisierung nun
+          wesentlich fluessiger grosse Relationen anzeigen.
+          (RelationWindow.needRedraw und _relation_viewport_redraw_real).
+
+23.10.2008:
+        - Fehler in der Anzeige von Relationen behoben. Auf zoom-level 10 war
+          die unterste Zeile der Relation nicht mehr anzeigbar.
+
+22.10.2008:
+        - Relationen mit gesetzten Labeln (wenigstens Zeilen-, oder Spalten-
+          label), werder auf den Sun-Rechnern der Uni. nun auch mit kleinstem
+          Zoom angezeigt. Der Grund fuer das Problem ist nicht genau bekannt,
+          es scheint aber durch externe Bibliotheken begruendet zu sein (vmtl.
+          cairo) im Zusammenhang mit der Darstellung extrem kleiner Schrift,
+          welche bei der kleinsten zoom-Stufe auftritt. Als workaround wurde
+          die Darstellung der label fuer diese Zoom-Stufe nun deaktiviert.
+
+10.10.2008:
+        - Die Kanten der Graphen (graph.h) werden nun zusaetzlich in in einem
+          Baum gespeichert, damit schnell auf diese zugegriffen werden kann.Der
+          alleinige Zugriff ueber die Liste hat die Darstellung aufgrund stark
+          verzoegert. Die Darstellung ist allerdings immernoch nicht hinreich- 
+          end schnell fuer eine fluessige Anzeige bei grossen Graphen.
+
+03.10.2008:
+	- Fehler beim Erstellen neuer Relationen behoben. Das System ist
+	  abgestuerzt, wenn kein Name fuer die neue Relation angeg. wurde.
+	- Problem mit vertauschen Historien im Evaluations- und Markierungs-
+	  Fenster behoben.
+	- Das Debugger-Fenster wird nicht mehr automatisch geschlossen. Die
+	  entspr. Option wurde std.-maessig deaktiviert.
+	- Problem mit der Aktualisierung im Debugger-Fenster nach dem
+	  Fortsetzen der Auswertung mittels "Go"-Button behoben. Bevor dem
+	  Benutzer die Kontroll uebergeben wird, wird die Darstellung unabh.
+	  der evtl. Aenderungen aktualisiert.
+	- Darstellung des naechsten Schritts im Debugger-Fenster (Console)
+	  ausgebessert. Es sollten nun die meisten Ausdruecke korrekt dar-
+	  stellt werden.
+
+	- Es werden nun die GNU autotools fuer das build-management des Systems
+	  verwendet. Im Zuge dessen wurde die Verzeichnisstruktur grundlegend
+	  umgestellt (und vereinfacht). Die Groesse der zu pflegenden Dateien
+	  (Makefiles) hat sich damit gedrittelt. Zudem ermoeglicht das neue
+	  System eine massiv vereinfachte Portierung des Systems auf andere
+	  (Betriebs-)Systeme. Fuer Informationen ueber die Verzeichnisstruktur
+	  siehe die FILES Datei im toplevel-Verzeichnis. Fuer Informationen
+	  zum Kompilieren des Systems, siehe die COMPILE Datei im gleichen
+	  Verzeichnis.
+
+Version 7.1.0 (Sept. 2008):
+        - Das urspruengliche RelationWindow aufgeteilt und die Darstellungs-
+          komponente ausgegliedert in RelationViewport. Diese wird im Debug-
+          Window fuer die Darstellung von Relationen verwendet.
+        - RelationViewport verwendet statt den gdk-Routinen nun auch Cairo.
+        - Column-labels im RelationViewport werden um 45 Grad CCW gedreht
+          gezeichnet. Die noetigen Raender werden nun praeziser (schmaler)
+          berechnet, als in vorigen Versionen.
+        - Die Schriftgroesse der Labels im RelationViewport passt sich nun
+          dem zoom des RelationViewports an.
+        - Durch das Unterbinden unnoetiger Zaehloperationen im Relation-
+          Viewport wurde ein massiver Geschwindigkeitsgewinn erzielt. Es
+          koennen nun auch sehr sehr grosse Relationen schnell angezeigt
+          werden.
+        - Der RelationViewport greift nicht mehr direkt auf die Relation zu,
+          sondern verwendet dazu RelationProxy (Proxy-DesignPattern).
+        - In den Optionen kann man nun default labels auswaehlen. Diese werden
+          verwendet, auch wenn einer Relation keine labels zugewiesen wurden.
+        - In den Optionen kann nun das anti-aliasing des GraphWindow
+          (de-)aktiviert werden. Bei langsameren Rechnern ist diese Option
+          von Vorteil. Std.-maessig ist die Option deaktiviert.
+        - Das Optionen-Fenster verwendet nun Tabs (GtkNotebook), um die
+          Optionen in zusammengehoerige Bereiche zu unterteilen.
+        - Einige Fenster werden nun mit libglade (XML) erstellt, statt ueber
+          vorher erstellten C-Code. Dies ermoeglicht das Veraendern der GUI
+          ohne neu kompilieren zu muessen. Zudem wird die Generation von
+          C-Code von Glade3 nicht laenger unterstuetzt. Das Programm 'make'
+          erstellt dazu aus der XML-Datei eine Datei mit C-Code, welche
+          jedoch wiederrum kompiliert werden muss. (Siehe das 'glade'-
+          Verzeichnis und das DebugWindow als Beispiel).
+        - Es wurde das neue ASSERT-Statement hinzugefuegt.
+        - Es wurden Funktionen TRUE() und FALSE() hinzugefuegt, die die
+          Relationen L und 0 mit Dimension 1x1 zurueckliefern.
+        - Es wurde ein Debugger (DebugWindow) hinzugefuegt, welcher das 
+          Schrittweise durchlaufen von Programmen ermoeglicht.
+          Der Debugger wird aufgerufen, wenn im EvalWindow 'Check Assertions'
+          aktiviert wurde und waehrend der Auswertung eine Zusicherung zu FALSE
+          ausgewertet wurde.
+          
+
+08.07.2008:
+        - Fehler beim Erstellen von Vektoren/Relationen aus ausgewaehlten
+          Knoten, bzw. Kanten behoben.
+
+05.07.2008:
+        - Darstellung von Knoten auf Cairo umgestellt. Hervorgehobene Knoten
+          werden nun, wie die Kanten auch, mit dickem Rand darstellt. Die 
+          Umstellung ermoeglicht zudem eine einfachere Einfaerbung der Knoten
+          in den verschiebenen Zustaenden. (Siehe GraphWindowDisplay.c.)
+        - Anti-Aliasing fuer das GraphWindow kann nun optional mit dem 
+          define-switch USE_CAIRO_ANTIALIAS in GraphWindowDisplay aktiviert
+          werden. Dieser ist z.Zt. aktiviert.
+        - Im Evaluation-Fenster koennen nun keine zu langen Relationennamen
+          mehr eingegeben werden.
+        - Im Graph-Fenster wird nun ein Hinweis angezeigt, wie Knoten und Kanten
+          deselektiert werden koennen, falls solche selektiert sind.
+
+21.06.2008:
+        - Probleme mit den neuen Cario-Routinen behoben.
+        - Fehler in sul/planar.c behobene. Der Fehler hatte dazu gefuehrt, dass
+          der Planaritaetstest auf Graphen, mit ausschliesslich reflexiven
+          Kanten, im einem SIGSEGV endet.
+        - Fehler in main.c:free_resources() im Zusammenhang mit dem Graph-
+          Window singleton und graph_window_destroy() behoben. Der Fehler
+          hatte dazu gefuehrt, dass beim Beenden von RelView ein SIGSEGV
+          auftritt.
+
+01.05.-14.06.2008:
+        - Versionsnummer auf 7.0.5 erhoeht.
+        - Routine "rc_ask_rel_name" hinzugefuegt, um einen gueltigen Namen 
+          fuer eine Relation vom Benuzter zu erfragen. Wird u.a. verwendet in
+          compute.c und in graphwindow_gtk.c
+        - Die Datenstrukturen Node unde Edge (beide graph.h) um ein "flags"
+          Element erweitert. Dieses soll das "state" Element abloesen, welches
+          lediglich einen Zustand annehmen kann, waehrend ein Zustand mehrere
+          flags besitzen kann. Dies ist notwendig, um die verschiedenen
+          Moeglichkeiten bei der Darstellung handhaben zu koennen. Das "state"
+          Element wird jedoch noch verwendet.
+        - Fuer das Graph-Fenster wurde eine Zoom-Funktionalitaet hinzugefuegt.
+          Diese erlaubt es dem Benutzer grosse Graphen ueberblicken zu koennen.
+          Der Zoom ist jedoch statisch und waehrend des Zooms kann der Benutzer
+          nicht mit den Elementen des Graphen interagieren.
+        - graphwindow_gtk.c wurde komplett umgeschrieben und in mehrerer
+          Dateien aufgespalten:
+            GraphWindow.c               "graph_window_" Prefix. Stellt Routinen
+                                        fuer ein GraphWindow bereit.
+            GraphWindowSingleton.c      Zugriff auf die GraphWindow-Instanz des
+                                        RelView-Systems.
+            GraphWindowDisplay.c        Routinen fuer die Darstellung der Knoten
+                                        und Kanten im Fenster.
+            Node.c                      Besondere Routinen fuer die Handhabung
+                                        von Knoten im GraphWindow. Hierzu
+                                        zaehlen insb. die Sensor-Routinen, um
+                                        zu erkennen, ob die Maus ueber einem
+                                        Knoten ist.
+            Edge.c                      Analog wie Node.c, jedoch fuer Kanten.
+            SelectionManager.c          Routinen fuer einen allgemeinen Ansatz
+                                        zum Hervorheben (highlight) und Aus-
+                                        waehlen von Objekten. Wird vom Graph-
+                                        Window genutzt.
+            DragManager.c               Behandlung von einfacher Drag&Drop-
+                                        Funktionalitaet im GraphWindow. Wird
+                                        z.Zt. nicht verwendet.
+            GraphTests.c                Routinen zum Testen von Eigenschaften
+                                        eines Graphen. Ausgelagert aus der
+                                        Datei graphwindow_gtk.c
+            graphwindow_intf.c          Wie gehabt. Sollte in Zukunft geloescht
+                                        werden.
+            graphwindow_gtk.c           Gtk+ Callbacks und diverse Routinen,
+                                        die bisher keiner anderen Datei 
+                                        zugeordnet werden konnten.
+        - Hervorheben von Kanten und Knoten in Graphen. Faehrt der Benutzer mit
+          der Maus ueber einen Knoten, oder ueber eine Kante, wird das Objekt
+          hervorgehoben. Der Benutzer kann mit der mittleren Maustaste das
+          Objekt loeschen. mit CRTL+linke Maustaste kann der Benutzer ein
+          Objekt auswaehlen und danach gleiche Objekte des GLEICHEN Typs aus-
+          waehlen. Drueckt der Benutzer dabei auf kein Objekt, sondern in den
+          freien Bereich, geht seine Auswahl verloren. Waehlt der Benutzer
+          ein bereits ausgewaehltes Objekt, so wird die Auswahl aufgehoben.
+          Hat der Benutzer Kanten selektiert, so wird im Popup Menu
+          (Rechtsklick) eine Option zum Erstellen einer Relation angeboten. Der
+          Benutzer kann seine Auswahl so in eine (evtl. neue) Relation ueber-
+          fuehren. Sind Knoten ausgewaehlt, kann der Benutzer einen Vektor
+          erstellen.
+          Kanten, die mitteln help nodes darstellt werden, koennen z.Zt. nicht
+          hervorgehoben oder ausgewaehlt werden.
+        - Der Benutzer kann nun bei den Optionen einstellen, ob welcher Groesse
+          Relationen im Relationen-Fenster nicht mehr angezeigt werden sollen.
+          (relation/relationSize: rel_allow_display(...))
+        - Gibt der Benutzer im Evaluation-Fenster einen ungueltigen Namen fuer
+          die Zielrelation an, wird er sofort und vor der Berechnung nach einem
+          neuen Namen gefragt. Existiert die Relation bereits, wird der Benutzer
+          nach der Auswertung gefragt, ob er einen neuen Namen angeben, oder die
+          bisherige Relation ueberschreiben moechte. Die Option "Ask for
+          confirmation" wird dabei z.Zt. nicht beruecksichtigt.
+        - Nach der Auswertung wird nun, wie in vorigen Versionen, die benoetigte
+          (CPU-)Zeit fuer die Auswertung angezeigt.
+        - Ein Fehler beim labeln von leeren Graphen hat zu Fehlern gefuehrt.
+          Dies wurde behoben. (label/label.c: label_assignment_iterator_begin)
+        - Diverse kleine Aenderungen.
+          
+
+22.04.2008:
+	- Berechnung in compute.c/.h ausgelagert.
+
+19.04.2008:
+        - Auswertungen von Termen werden nun in einem separaten Prozess durch-
+          gefuehrt. Waehrend der Dauer der Auswertung wird dem Benutzer die
+          Moeglichkeit gegeben die Auswertung sofort abzubrechen.
+          (keywords: util.c, fork, threads, semaphore, mutex, Semaphore.c/.h)
+        - Durch die Nutzung von GLib threads mussten bestehende Fenster
+          ausgetauscht werden, die direkt GLib main loops verwendeten, diese
+          aber nicht mit gdk_thread_enter/leave abgesichert haben. Die neuen
+          Dialoge wurden mit Glade 3 erstellt und sind entsprechend in der
+          Datei glade/relview.glade zu finden. Durch die Umstellung sind 
+          diverse ..._intf.c Dateien weggefallen.
+        - Objektorientierte Handhabung von Historien (z.B. fuer Terme) in
+          history.c/.h erstellt.
+	- Eine auf dem System V Standard aufbauende Abstaktionsschicht fuer
+	  fuer Semaphore erstellt. (Semaphore.c/.h)
+
+10.04.2008:
+	- Es wurde eine neue Option fuer das Festsetzen eines 'seeds' fuer
+	  den verwendeten Zufallsgenerator integriert. Dieser Wert wird
+	  beim Start gesetzt und _immer_, wenn das Options-Fenster geschlossen
+	  wird, auch wenn sich der Wert nicht veraendert hat. Ein gleicher
+	  'seed' fuehrt bei gleicher Folge von Operationen zu einem gleichen
+	  Ergebnis, gewaehrleistet also Determinismus. 	
+	- Das Options-Fenster wurde generell ueberarbeitet und liegt nun 
+	  als XML-Datei fuer Glade vor. Der zugehoerige C-Code laesst sich
+	  mit Glade2 erzeugen. In Zukunft soll dieses Vorgehen auf andere
+	  Bereiche ausgeweitet werden und ggf. libglade fuer die einfachere
+	  Pflege der GUI zum Einsatz kommen.
+
+09.04.2008:
+	- Gespeicherte Schriftarten werden nun wieder beim Start von RelView
+	  geladen. Allerdings koennen diese auch ueber die - wie von GTK
+	  vorgesehen - Resource Files (RC Files) geaendert werden, sowie
+	  diverse andere Optionen fuer das Erscheinungsbild einer Anwendung.
+	- SIMD-oriented Fast Mersenne Twister (SFMT) wurde als alternativer
+	  Zufallszahlengenerator integriert. Die Auswahl wir in make.config
+	  getroffen. Dort ist auch der Pfad zum SFMT-Verzeichnis anzugeben.
+	  Wird SFMT verwendet, so wird bei der Verwendung der "Pseudo-Random"
+	  Einstellung stets 0 fuer die Initialisierung des Zufallsgenerators
+	  verwendet.
+
+27.03.2008:
+	- Die Umschalt-Knoepfe werden nun automatisch deaktiviert, wenn das
+	  zugehoerige Fenster geschlossen wird. 
+
+26.03.2008:
+	- Fehler beim Speichern von .ascii Dateien behoben.
+	- Auch wenn das Info-Fenster nicht ueber den "Close"-Knopf beendet
+	  wird, kann das Programm ueber den "Quit"-Knopf geschlossen werden.
+	- Im Info-Fenster wird nun die aktuelle Version gemaess der Vorgabe
+	  in include/version.h angezeigt.
+	- relview.bash.in exportiert keine Umgebungsvariablen mehr.

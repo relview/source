@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT relview (relation|graph|domain|function)*>
+	  <!ATTLIST relview version CDATA #REQUIRED>
+
+	  <!ELEMENT relation (bdd)>
+	  	    <!ATTLIST relation name CDATA #REQUIRED>
+	  	    <!ATTLIST relation width CDATA #REQUIRED>
+	  	    <!ATTLIST relation height CDATA #REQUIRED>
+  	  	    <!ATTLIST relation state (NORMAL|HIDDEN|MODIFIED|TEMP) #IMPLIED>
+	  	    <!ELEMENT bdd (#PCDATA)>
+
+	  <!ELEMENT graph (node+,edge*)>
+	  	    <!ATTLIST graph name CDATA #REQUIRED>
+		    <!ATTLIST graph hidden (yes|no) "no">
+		    <!ATTLIST graph correspondence (yes|no) "no">
+		    <!-- Obsolete -->
+		    <!ATTLIST graph state (NORMAL|HIDDEN|MODIFIED|TEMP|CORRESPONDENCE) #IMPLIED>
+		    <!ELEMENT node EMPTY>
+		    	      <!ATTLIST node name CDATA #REQUIRED>
+			      <!ATTLIST node x CDATA #REQUIRED>
+			      <!ATTLIST node y CDATA #REQUIRED>
+			      <!ATTLIST node dim CDATA #REQUIRED>
+			      <!-- Obsolete -->
+			      <!ATTLIST node state (DEFAULT|WEIGHT|HELP) #IMPLIED>
+			      
+		    <!ELEMENT edge (path?)>
+		    	      <!ATTLIST edge name CDATA #IMPLIED>
+			      <!ATTLIST edge from CDATA #REQUIRED>
+			      <!ATTLIST edge to CDATA #REQUIRED>
+			      <!ATTLIST edge state (DEFAULT|WEIGHT|HELP) #IMPLIED>
+			      <!ELEMENT path (point*)>
+			      		<!ELEMENT point (#PCDATA)>
+
+	  <!ELEMENT domain ((comp,comp),comp*)>
+	  	    <!ATTLIST domain name CDATA #REQUIRED>
+		    <!ATTLIST domain type (DIRECT_SUM|DIRECT_PRODUCT) #REQUIRED>
+		    <!ELEMENT comp (#PCDATA)>
+
+	  <!ELEMENT function (#PCDATA)>

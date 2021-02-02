@@ -1,0 +1,133 @@
+{* Closures *}
+
+rc(R)  = refl(R).
+sc(R)  = R | R^.
+tc(R)  = trans(R).              
+rtc(R) = refl(trans(R)).
+aec(R) = rtc(sc(R)).
+del(R,x) = R & -(x*L1n(R)) & -(Ln1(R)*x^).
+
+{* Irreflexive part and related problems *}
+
+ipa(R)   = R & -I(R).
+hasse(R) = ipa(R) & -(ipa(R)*ipa(R)).
+tik(R)   = R & -(R*trans(R)).
+
+{* Base operations on graphs *}
+
+vertex(R)     = point(R).
+arc(R)        = atom(R).
+edge(R)       = atom(R) | atom(R)^.
+roots(R)      = -dom(-rtc(R)).
+sources(R)    = sinks(R^).
+sinks(R)      = -dom(R).
+isolated(R)   = sources(R) & sinks(R).
+pendant(R)    = dom(up(R)).
+rigid(R)      = dom(mp(R)).
+preds(R,v)    = R * v.
+succs(R,v)    = R^ * v.
+reach(R,v)    = rtc(R)^ * v.
+direct(R)     = ipa(R & - rtc(succ(dom(R)))).
+undirect(R)   = sc(R) & -I(R).
+subgraph(R,v) = R & v * v^.
+delete(R,v)   = inj(-v) * R * inj(-v)^.
+B(R,S)        = conc(O(R*S)+S,R+O(S*R)).
+union(R,S)    = conc(R,On1(R)*O1n(S)) + conc(On1(S)*O1n(R),S).
+
+{* Base operations on relations *}
+
+up(R)         = R & -(R * -I(R^*R)).
+mp(R)         = R & R * -I(R^*R).
+ran(R)        = dom(R^).
+symmdiff(R,S) = (R & -S) | (S & -R).
+
+{* Base operations on order relations *}
+
+max(R,v) = min(R^,v).
+min(R,v) = v & ((R & -I(R)) \ -v).
+ma(R,v)  = mi(R^,v).
+mi(R,v)  = R / v^.
+sup(R,v) = inf(R^,v).
+inf(R,v) = ge(R,mi(R,v)).
+ge(R,v)  = v & -((-R)^ * v).
+le(R,v)  = v & -(-R * v).
+
+{* Relations as sequences of vectors *}
+
+first(R)  = R * init(O1n(R)^).
+rest(R)   = R * inj(-init(O1n(R)^))^.
+conc(R,Y) = (R^ + Y^)^.
+sel1(R)   = first(R).
+sel2(R)   = R * next(init(O1n(R)^)).
+sel3(R)   = R * next(next(init(O1n(R)^))).
+sel4(R)   = R * next(next(next(init(O1n(R)^)))).
+sel5(R)   = R * next(next(next(next(init(O1n(R)^))))).
+sel6(R)   = R * next(next(next(next(next(init(O1n(R)^)))))).
+sel7(R)   = R * next(next(next(next(next(next(init(O1n(R)^))))))).
+sel8(R)   = R * next(next(next(next(next(next(next(init(O1n(R)^)))))))).
+sel9(R)   = R * next(next(next(next(next(next(next(next(init(O1n(R)^))))))))).
+
+{* Relation-algebraic properties *}
+
+universal(R)    = empty(-R).
+vector(R)       = eq(R,dom(R)*L1n(R)).
+total(R)        = universal(dom(R)).
+mapping(R)      = unival(R) & total(R).
+injective(R)    = unival(R^).
+surjective(R)   = total(R^).
+bijective(R)    = injective(R) & surjective(R).
+reflexive(R)    = incl(I(R),R).
+irreflexive(R)  = incl(R,-I(R)).
+symmetric(R)    = incl(R^,R).
+transitive(R)   = incl(R*R,R).
+equivalence(R)  = reflexive(R) & symmetric(R) & transitive(R).
+antisymm(R)     = incl(R&R^,I(R)).
+order(R)        = reflexive(R) & antisymm(R) & transitive(R).
+difunctional(R) = incl(R*R^*R,R).
+
+{* Graph-theoretic properties *}
+
+simple(R)      = symmmetric(R) & irreflexive(R).
+connect(R)     = incl(L(R),rtc(sc(R))).
+strconnect(R)  = incl(L(R),rtc(R)).
+acyclic(R)     = incl(tc(R), -I(R)).
+dirforest(R)   = incl(R*R^,I(R)) & acyclic(R).
+dirtree(R)     = dirforest(R) & connect(R).
+nooddcycles(R) = incl(rtc(R*R)*R,-I(R)).
+
+{* Diverse functions *}
+
+l(X) = dom(L(X)).
+o(X) = dom(O(X)).
+bipartit(X) = incl(rtc(sc(X)*sc(X))*sc(X) & I(X),O(X)).
+cycfree(X) = incl(tc(X), -I(X)).
+forest(X) = incl(X*X^,I(X)) & cycfree(X).
+tree(X) = forest(X) & connect(X).
+sconnect(X) = incl(L(X),rtc(X)).
+isempty(X) = incl(X,O(X)).
+
+{* Random functions *}
+randompoint(v)
+DECL P
+BEG
+  P = randomperm(v)
+  RETURN P * point(P^ * v)
+END.
+
+randomatom(R)
+DECL P1, P2
+BEG
+  P1 = randomperm(O(R));
+  P2 = randomperm((O(R))^)
+  RETURN P1 * atom(P1^ * R * P2^) * P2
+END.
+
+randomcycle(v)
+DECL P, C, E
+BEG
+  C = succ(v);
+  P = randomperm(v);
+  E = -dom(C) * init(On1(C))^ | C
+  RETURN P * E * P^
+END.
+

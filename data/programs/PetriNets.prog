@@ -1,0 +1,107 @@
+{************************************************************
+Column-wise computation of the set of all markings of a C/E
+Petri net with conditions C, events E, and two relations
+R : C <-> E and S : E <-> C which are reachable from marking 
+m : C <-> 1 (see R. Behnke, 2nd ToolsWorkshop, Bremen, 1996)
+************************************************************}
+
+ReachMarkings(R,S,m)       
+  DECL epsiB, e, res, x, h1, h2, n, vn, k, pk
+  BEG  epsiB = epsi(dom(R));
+       x = syq(epsiB,m);
+       res = O(x);
+       WHILE -empty(x) DO
+         res = res | x;
+         h1 = x;
+         x = O(x);
+         WHILE -empty(h1) DO
+           n = point(h1);
+           h1 = h1 & -n;
+           vn = epsiB * n;
+           h2 = Ln1(S);
+           WHILE -empty(h2) DO
+             e = point(h2);
+             h2 = h2 & -e;
+             IF incl(R * e,vn)
+               THEN IF incl(vn, -(S^ * e))
+                      THEN k = (vn & -(R * e)) | S^ * e;
+                           pk = syq(epsiB,k);
+                           IF incl(pk,-res) 
+                             THEN x = x | pk
+                             FI
+                    FI
+             FI
+             OD
+           OD
+         OD
+       RETURN epsiB * inj(res)^
+  END.
+
+{************************************************************
+ Computation of the reachability relation on the markings 
+ for a C/E Petri net with conditions C, events E, relations
+ R : C <-> E and S : E <-> C (see TACAS 96)
+************************************************************}
+
+Trans(R,S,e)
+  DECL eps, L, res
+  BEG  eps = epsi(dom(R));
+       L = L1n(eps);
+       res = (R * e * L \ eps)^;
+       res = res & (S^ * e * L \ -eps)^;
+       res = res & syq((eps & -(R * e) * L) | S^ * e * L, eps)
+       RETURN res
+  END.
+
+ReachRel(R,S)
+  DECL e, res
+  BEG  e = init(dom(S));
+       res = Trans(R,S,e);
+       WHILE -empty(next(e)) DO
+         e = next(e);
+         res = res | Trans(R,S,e) 
+         OD
+       RETURN rtc(res)
+  END.
+
+{************************************************************
+ Column-wise representation of the set of all markings of a 
+ C/E Petri as above, which are reachable from a marking m : 
+ C <-> 1 (see also TACAS 96)
+************************************************************}
+         
+ReachVect(R,S,m)
+  DECL v, e, eps, res
+  BEG  eps = epsi(dom(R));
+       res = O(eps^ * eps);
+       v = Ln1(dom(S));
+       WHILE -empty(v) DO
+         e = point(v);
+         res = res | Trans(R,S,e);
+         v = v & -e 
+         OD
+       RETURN rtc(res)^ * syq(eps,m)
+  END.
+
+ReachList(R,S,m) = epsi(dom(R)) * inj(ReachVect(R,S,m))^.
+
+{************************************************************
+ Column-wise representation of the set of live markings of a 
+ C/E Petri net as above (see also TACAS 96)
+************************************************************}
+
+Enable(R,S) 
+  DECL eps
+  BEG  eps = epsi(dom(R))
+       RETURN (eps^ / R^) & (-eps^ / S)
+  END.
+
+LiveVect(R,S)
+  DECL reach, dead
+  BEG  reach = Reach(R,S);
+       dead = -(reach * Enable(R,S))
+       RETURN -dom(reach * dead)
+  END.
+
+LiveList(R,S) = epsi(dom(R)) * inj(LiveVect(R,S))^.
+

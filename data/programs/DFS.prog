@@ -1,0 +1,25 @@
+{******************************************************
+  Computation of the vector of reachable nodes in a
+  directed graph via nested-recursive depth first
+  search
+******************************************************}
+ 
+Dfs(R,s,t)
+  DECL p, v
+  BEG  IF empty(t)
+         THEN v = s
+         ELSE p = point(t);
+              IF incl(p,s)
+                THEN v = Dfs(R,s,t&-p)
+                ELSE v = Dfs(R,Dfs(R,s|p,R^*p),t&-p)
+              FI
+       FI
+       RETURN v
+  END.
+ 
+ReachDfs(R,s)
+  DECL v
+  BEG  v = Dfs(R,O(s),s)
+       RETURN v
+  END.
+ 

@@ -1,0 +1,8 @@
+
+avector(X) = (Ln1(X) \ (epsi | X * epsi))^ .
+
+svector(X) = (epsi & X * epsi) \ On1(X) .
+
+kvector(X) = avector(X) & svector(X) .
+
+kernels(X) = epsi * inj(kvector(X))^ .
